@@ -34,24 +34,36 @@ public class MainActivity extends AppCompatActivity {
     // Método para el boton Guardar
     public void Guardar (View view){
 
+        //Creamoslas variables para ambos campos
         String nombre = etNombre.getText().toString();
         String contenido = etContenido.getText().toString();
 
+        //los metodos que vamos a usar requieren try catch
         try {
 
+            //Guardamos de manera temporalla ruta donde esta la tarjeta SD
             File tarjetaSD = getExternalFilesDir(null);
-            //File tarjetaSD = Environment.getExternalStorageDirectory();
+            //File tarjetaSD = Environment.getExternalStorageDirectory(); esta deprecated
+
+            //Vemos dónde vamos a guardar nuestro archivo
             Toast.makeText(this, tarjetaSD.getPath(),Toast.LENGTH_SHORT).show();
+
+            // Creamos el objeto ruta Archivo y le damos estos dos metodos
             File rutaArchivo = new File(tarjetaSD.getPath(), nombre);
 
-            //Abrimos el archivo para poder escribir dentro de el
+            //Abrimos el archivo para poder escribir dentro de el.
             OutputStreamWriter crearArchivo = new OutputStreamWriter( openFileOutput(nombre, Activity.MODE_PRIVATE));
 
+            //Tenemos que indicar al priogramam que queremos escribir en el
             crearArchivo.write(contenido);
+            //limpiamos el buffer
             crearArchivo.flush();
+            //Cerramos el archivo que hemos abierto
             crearArchivo.close();
-
             Toast.makeText(this, "Guardado correctamente",Toast.LENGTH_SHORT).show();
+
+            etNombre.setText("");
+            etContenido.setText("");
 
 
         } catch (IOException e){
@@ -59,24 +71,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Creamos el metodo para el boton Buscar
     public void Consultar(View view){
+
+        //Creamos una variable para recuperar el nombre del archivo que el usuario quiere consultar
         String nombre = etNombre.getText().toString();
 
         try {
+            //Obtenemos la ruta de la tarjeta SD
             File tarjetaSD = getExternalFilesDir(null);
+            //Vamos a buscar al archivo
             File rutaArchivo = new File(tarjetaSD.getPath(), nombre);
+            //Abrimos el archivo con el nombre del archivo que queremos abrir
             InputStreamReader abrirArchivo = new InputStreamReader(openFileInput(nombre));
 
+            //Vamos a ir leyendo linea por linea para ir poniendo t_odo dentro de un objeto
             BufferedReader leerArchivo = new BufferedReader(abrirArchivo);
             String linea = leerArchivo.readLine();
+            //volvemos a inicializar esta variable
             String contenidoCompleto = "";
 
             while (linea != null){
+                //Vamos leyendo y vamos guardando linea por linea
                 contenidoCompleto = contenidoCompleto + linea + "\n";
                 linea = leerArchivo.readLine();
             }
 
             leerArchivo.close();
+            //Le decimos a nuestro archivo que se tiene que cerrar
             abrirArchivo.close();
             etContenido.setText(contenidoCompleto);
 
